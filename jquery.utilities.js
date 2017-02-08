@@ -316,17 +316,19 @@
 		return (isNaN(sum) && typeof alt !== "undefined" ? alt : sum);
 	};
 
-	$.fn.outside = function (ename, cb) {
-	    return this.each(function(){
-	        var $this = $(this), self = this;
+	$.fn.outside = function (ename, cb, permanent) {
+		return this.each(function(){
+			var $this = $(this), self = this;
 
-	        $(document).bind(ename, function tempo (e) {
-	            if (e.target !== self && !$.contains(self, e.target)) {
-	                cb.apply(self, [e]);
-					$(document).unbind(ename, tempo);
-	            }
-	        });
-	    });
+			$(document).on(ename, function tempo (e) {
+				if (e.target !== self && !$.contains(self, e.target)) {
+					cb.apply(self, [e]);
+					if (!permanent) {
+						$(document).off(ename, tempo);
+					}
+				}
+			});
+		});
 	};
 
 	$.fn.isBound = function(type, fn) {
