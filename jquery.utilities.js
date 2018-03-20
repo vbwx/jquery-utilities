@@ -316,19 +316,41 @@
 		return (isNaN(sum) && typeof alt !== "undefined" ? alt : sum);
 	};
 
-	$.fn.outside = function (ename, cb, permanent) {
+	$.fn.outside = function (ename, cb, once) {
 		return this.each(function(){
-			var $this = $(this), self = this;
+			var self = this;
 
-			$(document).on(ename, function tempo (e) {
+			$(document).on(ename, function handler (e) {
 				if (e.target !== self && !$.contains(self, e.target)) {
-					cb.apply(self, [e]);
-					if (!permanent) {
-						$(document).off(ename, tempo);
+					cb.call(e.target, e);
+					if (once) {
+						$(document).off(ename, handler);
 					}
 				}
 			});
 		});
+	};
+
+	$.fn.outsideAll = function(ename, cb, once) {
+		var self = this;
+		
+		$(document).on(ename, function handler(e) {
+			var outside = true;
+
+			for (var i = 0; i < self.length; i++) {
+				if (e.target === self[i] || $.contains(self[i], e.target)) {
+					outside = false;
+					break;
+				}
+			}
+			if (outside) {
+				cb.call(e.target, e);
+				if (once) {
+					$(document).off(ename, handler);
+				}
+			}
+		});
+		return this;
 	};
 
 	$.fn.isBound = function(type, fn) {
@@ -336,7 +358,6 @@
 		if (data) {
 			data = data[type];
 		}
-
 	    if (typeof data === "undefined" || !data.length) {
 	        return false;
 		}
