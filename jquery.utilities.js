@@ -1,7 +1,7 @@
 /*jshint -W061*/
 
 // jQuery Utilities
-// Copyright (C) 2013-2016 Bernhard Waldbrunner
+// Copyright (C) 2013-2016 vbwx
 /*
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
